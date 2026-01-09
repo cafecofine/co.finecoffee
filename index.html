@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Co.fine - Specialty Coffee</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background-color: #0a0a0a;
+        }
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-black">
+    <!-- Header -->
+    <header class="bg-gray-900 text-white shadow-lg sticky top-0 z-40 border-b border-gray-800">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <img src="D:\co.fine\logo.png" alt="Logo" class="w-12 h-12 object-contain">
+                    <div>
+                        <h1 class="text-2xl font-bold">Co.fine</h1>
+                        <p class="text-sm text-gray-400">Specialty Coffee & More</p>
+                    </div>
+                </div>
+                <button onclick="toggleCart()" class="relative bg-amber-600 hover:bg-amber-500 p-3 rounded-full transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    <span id="cartBadge" class="hide absolute -top-2 -right-2 bg-red-500 text-white text-xs w-6 h-6 flex items-center justify-center rounded-full font-bold">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-gray-900 via-gray-800 to-black text-white py-16 border-b border-gray-800">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-5xl font-bold mb-4 text-amber-500">Selamat Datang!</h2>
+            <p class="text-xl text-gray-300">Pesan kopi favoritmu sekarang</p>
+        </div>
+    </div>
+
+    <!-- Category Filter -->
+    <div class="bg-gray-900 shadow-md sticky top-20 z-30 border-b border-gray-800">
+        <div class="container mx-auto px-4 py-4 overflow-x-auto">
+            <div class="flex gap-2" id="categoryButtons">
+                <button onclick="filterCategory('All')" class="category-btn px-6 py-2 rounded-full whitespace-nowrap transition bg-amber-600 text-white">All</button>
+                <button onclick="filterCategory('Coffee')" class="category-btn px-6 py-2 rounded-full whitespace-nowrap transition bg-gray-800 text-gray-300 hover:bg-gray-700">Coffee</button>
+                <button onclick="filterCategory('Non-Coffee')" class="category-btn px-6 py-2 rounded-full whitespace-nowrap transition bg-gray-800 text-gray-300 hover:bg-gray-700">Non-Coffee</button>
+                <button onclick="filterCategory('Food')" class="category-btn px-6 py-2 rounded-full whitespace-nowrap transition bg-gray-800 text-gray-300 hover:bg-gray-700">Food</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Grid -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="menuGrid"></div>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div id="cartSidebar" class="hide fixed inset-0 bg-black bg-opacity-80 z-50">
+        <div class="absolute right-0 top-0 h-full w-full md:w-96 bg-gray-900 shadow-2xl flex flex-col border-l border-gray-800">
+            <div class="bg-black text-white p-5 flex items-center justify-between border-b border-gray-800">
+                <h2 class="text-2xl font-bold">Keranjang</h2>
+                <button onclick="toggleCart()" class="hover:bg-gray-800 p-2 rounded">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-5" id="cartItems">
+                <div class="text-center text-gray-500 mt-20">
+                    <svg class="w-16 h-16 mx-auto mb-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    <p>Keranjang kosong</p>
+                </div>
+            </div>
+
+            <div id="cartFooter" class="hide border-t border-gray-800 p-5 bg-black">
+                <div class="space-y-3 mb-4">
+                    <input type="text" id="customerName" placeholder="Nama Anda *" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 placeholder-gray-500">
+                    <input type="text" id="tableNumber" placeholder="Nomor Meja (opsional)" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 placeholder-gray-500">
+                </div>
+                <div class="flex justify-between items-center mb-4 text-xl font-bold text-white">
+                    <span>Total:</span>
+                    <span class="text-amber-500" id="totalPrice">Rp 0</span>
+                </div>
+                <button onclick="sendToWhatsApp()" class="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                    </svg>
+                    Pesan via WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Menu - GANTI dengan menu cafe Anda
+        const menuItems = [
+            {
+                id: 1,
+                name: 'Espresso',
+                price: 18000,
+                category: 'Coffee',
+                image: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=400&h=300&fit=crop',
+                description: 'Kopi espresso klasik yang kuat'
+            },
+            {
+                id: 2,
+                name: 'Cappuccino',
+                price: 25000,
+                category: 'Coffee',
+                image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=400&h=300&fit=crop',
+                description: 'Espresso dengan susu foam lembut'
+            },
+            {
+                id: 3,
+                name: 'Cafe Latte',
+                price: 28000,
+                category: 'Coffee',
+                image: 'https://images.unsplash.com/photo-1561882468-9110e03e0f78?w=400&h=300&fit=crop',
+                description: 'Espresso dengan susu steamed'
+            },
+            {
+                id: 4,
+                name: 'Iced Americano',
+                price: 22000,
+                category: 'Coffee',
+                image: 'https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?w=400&h=300&fit=crop',
+                description: 'Espresso dengan air dingin dan es'
+            },
+            {
+                id: 5,
+                name: 'Matcha Latte',
+                price: 30000,
+                category: 'Non-Coffee',
+                image: 'https://images.unsplash.com/photo-1536013406095-091d8cc7c0e0?w=400&h=300&fit=crop',
+                description: 'Matcha premium dengan susu'
+            },
+            {
+                id: 6,
+                name: 'Croissant',
+                price: 20000,
+                category: 'Food',
+                image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400&h=300&fit=crop',
+                description: 'Croissant butter segar'
+            }
+        ];
+
+        let cart = [];
+        let currentCategory = 'All';
+
+        // Format Rupiah
+        function formatRupiah(number) {
+            return new Intl.NumberFormat('id-ID').format(number);
+        }
+
+        // Render Menu
+        function renderMenu() {
+            const menuGrid = document.getElementById('menuGrid');
+            const filtered = currentCategory === 'All' 
+                ? menuItems 
+                : menuItems.filter(item => item.category === currentCategory);
+
+            menuGrid.innerHTML = filtered.map(item => `
+                <div class="bg-gray-900 rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition border border-gray-800">
+                    <img src="${item.image}" alt="${item.name}" class="w-full h-48 object-cover">
+                    <div class="p-5">
+                        <span class="text-xs font-semibold text-amber-500 bg-gray-800 px-3 py-1 rounded-full">
+                            ${item.category}
+                        </span>
+                        <h3 class="text-xl font-bold mt-3 mb-2 text-white">${item.name}</h3>
+                        <p class="text-gray-400 text-sm mb-4">${item.description}</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl font-bold text-amber-500">Rp ${formatRupiah(item.price)}</span>
+                            <button onclick="addToCart(${item.id})" class="bg-amber-600 hover:bg-amber-500 text-white p-3 rounded-full transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter Category
+        function filterCategory(category) {
+            currentCategory = category;
+            
+            // Update button styles
+            const buttons = document.querySelectorAll('.category-btn');
+            buttons.forEach(btn => {
+                if (btn.textContent === category) {
+                    btn.className = 'category-btn px-6 py-2 rounded-full whitespace-nowrap transition bg-amber-600 text-white';
+                } else {
+                    btn.className = 'category-btn px-6 py-2 rounded-full whitespace-nowrap transition bg-gray-800 text-gray-300 hover:bg-gray-700';
+                }
+            });
+            
+            renderMenu();
+        }
+
+        // Add to Cart
+        function addToCart(itemId) {
+            const item = menuItems.find(i => i.id === itemId);
+            const existing = cart.find(i => i.id === itemId);
+            
+            if (existing) {
+                existing.quantity++;
+            } else {
+                cart.push({...item, quantity: 1});
+            }
+            
+            updateCart();
+        }
+
+        // Update Quantity
+        function updateQuantity(itemId, change) {
+            const item = cart.find(i => i.id === itemId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    removeFromCart(itemId);
+                } else {
+                    updateCart();
+                }
+            }
+        }
+
+        // Remove from Cart
+        function removeFromCart(itemId) {
+            cart = cart.filter(i => i.id !== itemId);
+            updateCart();
+        }
+
+        // Update Cart Display
+        function updateCart() {
+            const cartItems = document.getElementById('cartItems');
+            const cartFooter = document.getElementById('cartFooter');
+            const cartBadge = document.getElementById('cartBadge');
+            const totalPrice = document.getElementById('totalPrice');
+            
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            // Update badge
+            if (totalItems > 0) {
+                cartBadge.textContent = totalItems;
+                cartBadge.classList.remove('hide');
+            } else {
+                cartBadge.classList.add('hide');
+            }
+            
+            // Update cart items
+            if (cart.length === 0) {
+                cartItems.innerHTML = `
+                    <div class="text-center text-gray-500 mt-20">
+                        <svg class="w-16 h-16 mx-auto mb-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                        <p>Keranjang kosong</p>
+                    </div>
+                `;
+                cartFooter.classList.add('hide');
+            } else {
+                cartItems.innerHTML = `
+                    <div class="space-y-4">
+                        ${cart.map(item => `
+                            <div class="bg-gray-800 rounded-xl p-4 border border-gray-700">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h3 class="font-bold text-white">${item.name}</h3>
+                                    <button onclick="removeFromCart(${item.id})" class="text-red-500 hover:text-red-400">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3 bg-gray-900 rounded-lg px-2 py-1">
+                                        <button onclick="updateQuantity(${item.id}, -1)" class="text-amber-500 hover:bg-gray-800 p-1 rounded">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                                            </svg>
+                                        </button>
+                                        <span class="font-bold w-8 text-center text-white">${item.quantity}</span>
+                                        <button onclick="updateQuantity(${item.id}, 1)" class="text-amber-500 hover:bg-gray-800 p-1 rounded">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <span class="font-bold text-amber-500">Rp ${formatRupiah(item.price * item.quantity)}</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                cartFooter.classList.remove('hide');
+                totalPrice.textContent = `Rp ${formatRupiah(total)}`;
+            }
+        }
+
+        // Toggle Cart
+        function toggleCart() {
+            const cartSidebar = document.getElementById('cartSidebar');
+            cartSidebar.classList.toggle('hide');
+        }
+
+        // Send to WhatsApp
+        function sendToWhatsApp() {
+            const customerName = document.getElementById('customerName').value;
+            const tableNumber = document.getElementById('tableNumber').value;
+            
+            if (!customerName || cart.length === 0) {
+                alert('Mohon isi nama dan pilih menu!');
+                return;
+            }
+            
+            let message = '*PESANAN BARU*\n\n';
+            message += `Nama: ${customerName}\n`;
+            if (tableNumber) message += `Meja: ${tableNumber}\n`;
+            message += '\n*Detail Pesanan:*\n';
+            
+            cart.forEach(item => {
+                message += `• ${item.name} x${item.quantity} - Rp ${formatRupiah(item.price * item.quantity)}\n`;
+            });
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            message += `\n*Total: Rp ${formatRupiah(total)}*`;
+            
+            // GANTI dengan nomor WhatsApp grup cafe Anda
+            // Format: 62xxxxxxxxxxx (tanpa +, tanpa -, tanpa spasi)
+            const waNumber = '628123456789'; // ⚠️ GANTI INI
+            const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
+            
+            window.open(waLink, '_blank');
+        }
+
+        // Initialize
+        renderMenu();
+    </script>
+</body>
+</html>
