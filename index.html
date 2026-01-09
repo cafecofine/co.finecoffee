@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Co.fine - Specialty Coffee</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background-color: #0a0a0a;
+        }
+
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-black">
+    <!-- Header -->
+    <header class="bg-gray-900 text-white shadow-lg sticky top-0 z-40 border-b border-gray-800">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <img src="logo.jpeg" alt="Logo" class="w-12 h-12 object-contain">
+                    <div>
+                        <h1 class="text-2xl font-bold">Co.fine</h1>
+                        <p class="text-sm text-gray-400">Specialty Coffee</p>
+                    </div>
+                </div>
+                <button onclick="toggleCart()"
+                    class="relative bg-amber-600 hover:bg-amber-500 p-3 rounded-full transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
+                        </path>
+                    </svg>
+                    <span id="cartBadge"
+                        class="hide absolute -top-2 -right-2 bg-red-500 text-white text-xs w-6 h-6 flex items-center justify-center rounded-full font-bold">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-gray-900 via-gray-800 to-black text-white py-16 border-b border-gray-800">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-5xl font-bold mb-4 text-amber-500">Selamat Datang!</h2>
+            <p class="text-xl text-gray-300">Pesan kopi favoritmu sekarang</p>
+        </div>
+    </div>
+
+    <!-- Category Filter -->
+    <div class="bg-gray-900 shadow-md sticky top-20 z-30 border-b border-gray-800">
+        <div class="container mx-auto px-4 py-4 overflow-x-auto">
+            <div class="flex gap-2" id="categoryButtons">
+                <button onclick="filterCategory('All')"
+                    class="category-btn px-6 py-2 rounded-full whitespace-nowrap transition bg-amber-600 text-white">All</button>
+                <button onclick="filterCategory('Coffee')"
+                    class="category-btn px-6 py-2 rounded-full whitespace-nowrap transition bg-gray-800 text-gray-300 hover:bg-gray-700">Coffee</button>
+                <button onclick="filterCategory('Non-Coffee')"
+                    class="category-btn px-6 py-2 rounded-full whitespace-nowrap transition bg-gray-800 text-gray-300 hover:bg-gray-700">Non-Coffee</button>
+                <button onclick="filterCategory('Heavy-Food')"
+                    class="category-btn px-6 py-2 rounded-full whitespace-nowrap transition bg-gray-800 text-gray-300 hover:bg-gray-700">Heavy-Food</button>
+                <button onclick="filterCategory('Snack')"
+                    class="category-btn px-6 py-2 rounded-full whitespace-nowrap transition bg-gray-800 text-gray-300 hover:bg-gray-700">Snack</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Grid -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="menuGrid"></div>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div id="cartSidebar" class="hide fixed inset-0 bg-black bg-opacity-80 z-50">
+        <div
+            class="absolute right-0 top-0 h-full w-full md:w-96 bg-gray-900 shadow-2xl flex flex-col border-l border-gray-800">
+            <div class="bg-black text-white p-5 flex items-center justify-between border-b border-gray-800">
+                <h2 class="text-2xl font-bold">Keranjang</h2>
+                <button onclick="toggleCart()" class="hover:bg-gray-800 p-2 rounded">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-5" id="cartItems">
+                <div class="text-center text-gray-500 mt-20">
+                    <svg class="w-16 h-16 mx-auto mb-4 opacity-30" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
+                        </path>
+                    </svg>
+                    <p>Keranjang kosong</p>
+                </div>
+            </div>
+
+            <div id="cartFooter" class="hide border-t border-gray-800 p-5 bg-black">
+                <div class="space-y-3 mb-4">
+                    <input type="text" id="customerName" placeholder="Nama Anda *"
+                        class="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 placeholder-gray-500">
+                    <input type="text" id="tableNumber" placeholder="Nomor Meja (opsional)"
+                        class="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 placeholder-gray-500">
+                </div>
+                <div class="flex justify-between items-center mb-4 text-xl font-bold text-white">
+                    <span>Total:</span>
+                    <span class="text-amber-500" id="totalPrice">Rp 0</span>
+                </div>
+                <button onclick="sendToWhatsApp()"
+                    class="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                    </svg>
+                    Pesan via WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Menu 
+        const menuItems = [
+            {
+                id: 1,
+                name: 'Hot Espresso',
+                price: 8000,
+                category: 'Coffee',
+                image: 'https://i.pinimg.com/736x/25/03/e5/2503e5f2b9ccab298f80514903cdf2cf.jpg',
+                description: 'Kopi espresso klasik yang kuat'
+            },
+            {
+                id: 2,
+                name: 'Hot Americano',
+                price: 10000,
+                category: 'Coffee',
+                image: 'https://i.pinimg.com/736x/9d/1e/40/9d1e40851b721ad6718997102ec752ea.jpg',
+                description: 'Hot espresso'
+            },
+            {
+                id: 3,
+                name: 'Iced Americano',
+                price: 13000,
+                category: 'Coffee',
+                image: 'https://i.pinimg.com/736x/cf/86/85/cf8685f6b02dea31682f696be282f703.jpg',
+                description: 'Iced espresso'
+            },
+            {
+                id: 4,
+                name: 'Butterscfotch Iced Coffee',
+                price: 18000,
+                category: 'Coffee',
+                image: 'https://i.pinimg.com/736x/78/6a/be/786abeba861d7f9dcb6b0e897d64b28a.jpg',
+                description: 'Iced kopi dengan butterscotch'
+
+            },
+            {
+                id: 5,
+                name: 'Hot Mochaccino',
+                price: 16000,
+                category: 'Coffee',
+                image: 'https://i.pinimg.com/1200x/f1/4e/70/f14e7007806beed9f34ff9cf733e5e52.jpg',
+                description: 'minuman kopi hangat yang menggabungkan rasa kopi, cokelat, dan susu'
+            },
+            {
+                id: 6,
+                name: 'Iced Mochaccino',
+                price: 18000,
+                category: 'Coffee',
+                image: 'https://i.pinimg.com/1200x/c8/ad/10/c8ad107ac4da5b217944daaa25f78bea.jpg',
+                description: 'minuman kopi dingin yang menggabungkan rasa kopi, cokelat, dan susu'
+            },
+            {
+                id: 7,
+                name: 'Iced Honey Wine Coffee',
+                price: 20000,
+                category: 'Coffee',
+                image: 'https://i.pinimg.com/1200x/d3/5e/df/d35edfab8044966fcc8e772506fda63b.jpg',
+                description: 'Iced kopi dengan madu dan wine'
+            },
+            {
+                id: 8,
+                name: 'Iced Cassava Coffee',
+                price: 20000,
+                category: 'Coffee',
+                image: 'https://i.pinimg.com/1200x/ac/f7/68/acf7680c3c1ea11d31c12c8831235562.jpg',
+                description: 'Iced kopi dengan singkong'
+            },
+            {
+                id: 9,
+                name: 'Iced Coffee Juice',
+                price: 15000,
+                category: 'Coffee',
+                image: 'https://i.pinimg.com/1200x/3c/be/f0/3cbef028196641e3a3974397574b6262.jpg',
+                description: 'Iced kopi yg menyegarkan dan fruity'
+            },
+            {
+                id: 10,
+                name: 'Hot Aren Coffee',
+                price: 17000,
+                category: 'Coffee',
+                image: 'https://i.pinimg.com/736x/f0/65/5f/f0655f2737da76be9b4ac435c65e3d9b.jpg',
+                description: 'Espresso dengan Aren susu'
+            },
+            {
+                id: 11,
+                name: 'Iced Aren Coffee',
+                price: 18000,
+                category: 'Coffee',
+                image: 'https://i.pinimg.com/736x/3b/75/75/3b7575763d6d76df819d18e12d6944eb.jpg',
+                description: 'Espresso dengan Aren susu'
+            },
+            {
+                id: 12,
+                name: 'Hot Vanilla Coffee',
+                price: 13000,
+                category: 'Coffee',
+                image: 'https://images.unsplash.com/photo-1561882468-9110e03e0f78?w=400&h=300&fit=crop',
+                description: 'Hot espresso dengan susu steamed'
+            },
+            {
+                id: 13,
+                name: 'Iced Vanilla Coffee',
+                price: 18000,
+                category: 'Coffee',
+                image: 'https://i.pinimg.com/1200x/48/19/5c/48195c0eaabf0f47af5c693f77ac0cca.jpg',
+                description: 'Iced espresso dengan susu steamed'
+            },
+            {
+                id: 14,
+                name: 'Hot Sanger Coffee',
+                price: 15000,
+                category: 'Coffee',
+                image: 'https://i.pinimg.com/1200x/6e/77/7b/6e777b99b4a8dde57638d4cbfa4c61b5.jpg',
+                description: 'Hot kopi dengan susu segar'
+            },
+            {
+                id: 15,
+                name: 'Iced Sanger Coffee',
+                price: 17000,
+                category: 'Coffee',
+                image: 'https://i.pinimg.com/736x/d4/fe/88/d4fe88e4ee264722471a7049bc641f3c.jpg',
+                description: 'Iced kopi dengan susu segar'
+            },
+            {
+                id: 16,
+                name: 'Iced Pandan Coffee',
+                price: 18000,
+                category: 'Coffee',
+                image: 'https://i.pinimg.com/1200x/8d/80/3e/8d803e28cdecdefc3c212c5986c21253.jpg',
+                description: 'Iced kopi dengan pandan'
+            },
+            {
+                id: 16,
+                name: 'Iced Caramel Macchiato',
+                price: 18000,
+                category: 'Coffee',
+                image: 'https://i.pinimg.com/736x/e4/26/93/e426933d47a949bc53ec5d33e103da4b.jpg',
+                description: 'Iced kopi dengan caramel'
+            },
+            {
+                id: 17,
+                name: 'V60',
+                price: 20000, 
+                category: 'Coffee',
+                image: 'https://i.pinimg.com/1200x/78/d7/4e/78d74e4cf0b2189efc931790cf75c1fa.jpg',
+                description: 'jenis kopi seduh manual'
+            },
+            {
+                id: 18,
+                name: 'Japanese',
+                price: 22000,
+                category: 'Coffee',
+                image: 'https://i.pinimg.com/736x/12/66/e7/1266e70a9727812ca9eecbc93560a09c.jpg',
+                description: 'jenis kopi seduh manual dingin'
+            },
+            {
+                id: 19,
+                name: 'Iced Matcha',
+                price: 30000,
+                category: 'Non-Coffee',
+                image: 'https://i.pinimg.com/1200x/6b/c5/59/6bc5595361ab1769566eec2dbb767503.jpg',
+                description: 'Matcha premium dengan susu'
+            },
+            {
+                id: 20,
+                name: 'Hot Original Tea',
+                price: 14000,
+                category: 'Non-Coffee',
+                image: 'https://i.pinimg.com/736x/57/f6/54/57f65428b60aafa7c0215bd8b5911195.jpg',
+                description: 'original tea segar'
+            },
+            {
+                id: 21,
+                name: 'Iced Original Tea',
+                price: 15000,
+                category: 'Non-Coffee',
+                image: 'https://i.pinimg.com/1200x/26/ca/6d/26ca6deba564f3d7256c6a563a5c5ef4.jpg',
+                description: 'iced original tea segar'
+            },
+            {
+                id: 22,
+                name: 'Hot Lemon Tea',
+                price: 14000,
+                category: 'Non-Coffee',
+                image: 'https://i.pinimg.com/736x/7b/e7/e0/7be7e00f8f0b66eb54ad0e8b4fac1b6e.jpg',
+                description: 'lemon tea segar'
+            },
+            {
+                id: 23,
+                name: 'Iced Lemon Tea',
+                price: 15000,
+                category: 'Non-Coffee',
+                image: 'https://i.pinimg.com/736x/2b/f3/e2/2bf3e2067b4c20b6aec6936aff3d3cfa.jpg',
+                description: 'iced lemon tea segar'
+            },
+            {
+                id: 24,
+                name: 'Hot Thai Tea',
+                price: 17000,
+                category: 'Non-Coffee',
+                image: 'https://i.pinimg.com/1200x/00/1e/32/001e32885b0afb7b660dedef40a3678f.jpg',
+                description: 'thai tea segar'
+            },
+            {
+                id: 25,
+                name: 'Iced Thai Tea',
+                price: 18000,
+                category: 'Non-Coffee',
+                image: 'https://i.pinimg.com/1200x/f4/17/28/f41728151235dd9de06e8dea3a7f7d9f.jpg',
+                description: 'thai tea segar'
+            },
+            {
+                id: 26,
+                name: 'Hot Green Tea',
+                price: 17000,
+                category: 'Non-Coffee',
+                image: 'https://i.pinimg.com/736x/40/6a/0b/406a0b4ae9230bdc47a42999ece186a4.jpg',
+                description: 'Green tea segar'
+            },
+            {
+                id: 27,
+                name: 'Iced Green Tea',
+                price: 18000,
+                category: 'Non-Coffee',
+                image: 'https://i.pinimg.com/1200x/08/c5/e9/08c5e9faeb9a8de1a10f0c158c989126.jpg',
+                description: 'Green tea segar'
+            },
+            {
+                id: 28,
+                name: 'Iced Lychee Tea',
+                price: 18000,
+                category: 'Non-Coffee',
+                image: 'https://i.pinimg.com/1200x/a6/22/be/a622beaaab9cd50a7f7cca579d802033.jpg',
+                description: 'Teh lychee segar'
+            },
+            {
+                id: 29,
+                name: 'Hot Chocolate',
+                price: 17000,
+                category: 'Non-Coffee',
+                image: 'https://i.pinimg.com/1200x/99/e0/e7/99e0e713044ebe85dd8f58ab0fcd388a.jpg',
+                description: 'Choco lezat dengan susu'
+            },
+            {
+                id: 30,
+                name: 'Iced Chocolate',
+                price: 18000,
+                category: 'Non-Coffee',
+                image: 'https://i.pinimg.com/1200x/49/d2/1b/49d21be8b47cee64b48fbe15bdab109b.jpg',
+                description: 'Choco lezat dengan susu'
+            },
+            {
+                id: 31,
+                name: 'Iced Chocolate Hazelnut',
+                price: 18000,
+                category: 'Non-Coffee',
+                image: 'https://i.pinimg.com/736x/9d/ac/fa/9dacfa55238e56339d1ad81f07868a37.jpg',
+                description: 'Choco dengan hazelnut'
+            },
+            {
+                id: 32,
+                name: 'Iced Choco Oreo',
+                price: 18000,
+                category: 'Non-Coffee',
+                image: 'https://i.pinimg.com/736x/77/eb/7b/77eb7bc822357c435717b7c2405a7a22.jpg',
+                description: 'Choco dengan oreo'
+            },
+            {
+                id: 33,
+                name: 'Iced Taro',
+                price: 18000,
+                category: 'Non-Coffee',
+                image: 'https://i.pinimg.com/1200x/44/89/11/4489112e9f12bee14b75c5fea0d138a9.jpg',
+                description: 'Taro lezat dengan susu'
+            },
+            {
+                id: 34,
+                name: 'Iced Red Velvet',
+                price: 18000,
+                category: 'Non-Coffee',
+                image: 'https://i.pinimg.com/1200x/82/0c/99/820c9955aaa6c9a3afc9f6761def4492.jpg',
+                description: 'Red Velvet dengan susu'
+            },
+            {
+                id: 35,
+                name: 'Bangladesh Noodles',
+                price: 13000,
+                category: 'Heavy-Food',
+                image: 'https://i.pinimg.com/736x/2b/ba/61/2bba61be2fdf54449779b4ef1649120b.jpg',
+                description: 'Bangladesh Noodles'
+            },
+            {
+                id: 36,
+                name: 'Fried Noodles',
+                price: 13000,
+                category: 'Heavy-Food',
+                image: 'https://i.pinimg.com/1200x/d8/8e/b3/d88eb35eaa368c8a198c2aee47176709.jpg',
+                description: 'Mie goreng spesial'
+            },
+            {
+                id: 37,
+                name: 'Soup Noodles',
+                price: 13000,
+                category: 'Heavy-Food',
+                image: 'https://i.pinimg.com/1200x/22/95/12/22951278d1fb388283b7063128ad9045.jpg',
+                description: 'Mie kuah hangat'
+            },
+            {
+                id: 38,
+                name: 'Frience Fries',
+                price: 10000,
+                category: 'Snack',
+                image: 'https://i.pinimg.com/736x/fe/60/40/fe6040f8012bbc5950b9486f6d68dfe3.jpg',
+                description: 'Kentang goreng renyah'
+            },
+            {
+                id: 39,
+                name: 'Chicken Nuggets',
+                price: 10000,
+                category: 'Snack',
+                image: 'https://i.pinimg.com/1200x/d8/27/78/d82778f06a93f8a1f20cf82e262aac88.jpg',
+                description: 'Nugget ayam gurih'
+            },
+            {
+                id: 40,
+                name: 'Sausage',
+                price: 10000,
+                category: 'Snack',
+                image: 'https://i.pinimg.com/1200x/48/12/a2/4812a2116fe356d79883b6ff656a3d0e.jpg',
+                description: 'Sosis Lezat'
+            },
+            {
+                id: 41,
+                name: 'Snack Platter',
+                price: 27000,
+                category: 'Snack',
+                image: 'https://i.pinimg.com/736x/2a/7b/55/2a7b55be9c41996d92e5bd002cc4e99b.jpg',
+                description: 'Sepiring camilan'
+            },
+            {
+                id: 42,
+                name: 'Dimsum Rumput Laut',
+                price: 18000,
+                category: 'Snack',
+                image: 'https://i.pinimg.com/736x/e0/89/08/e08908ebba29733998cadf14d56ff8f8.jpg',
+                description: 'Dimsum rumput laut'
+            },
+            {
+                id: 43,
+                name: 'Dimsum Ayam',
+                price: 14000,
+                category: 'Snack',
+                image: 'https://i.pinimg.com/736x/0e/0d/a5/0e0da52ce8779a550e541809ee287fa0.jpg',
+                description: 'Dimsum ayam'
+            },
+            {
+                id: 44,
+                name: 'Kebab Ayam Mini',
+                price: 14000,
+                category: 'Snack',
+                image: 'https://i.pinimg.com/736x/d9/a0/ac/d9a0ac4688418db504e324cfae909439.jpg',
+                description: 'Kebab ayam mini'
+            },
+            {
+                id: 45,
+                name: 'Pisang Goreng Srikaya',
+                price: 15000,
+                category: 'Snack',
+                image: 'https://i.pinimg.com/736x/77/3b/b8/773bb8672a034f9babb5d8c5a254a6c9.jpg',
+                description: 'Pisang goreng dengan srikaya'
+            },
+            {
+                id: 46,
+                name: 'Pempek Kapal Selam',
+                price: 22000,
+                category: 'Snack',
+                image: 'https://i.pinimg.com/736x/37/61/e5/3761e50c7500e0f1656daa620b355944.jpg',
+                description: 'Pempek kapal selam'
+            },
+            {
+                id: 47,
+                name: 'Pempek Mix Mini',
+                price: 25000,
+                category: 'Snack',
+                image: 'https://i.pinimg.com/736x/d7/fb/79/d7fb7952afb36febc704230539dafac9.jpg',
+                description: 'Pempek mix mini'
+            },
+        ];
+
+        let cart = [];
+        let currentCategory = 'All';
+
+        // Format Rupiah
+        function formatRupiah(number) {
+            return new Intl.NumberFormat('id-ID').format(number);
+        }
+
+        // Render Menu
+        function renderMenu() {
+            const menuGrid = document.getElementById('menuGrid');
+            const filtered = currentCategory === 'All'
+                ? menuItems
+                : menuItems.filter(item => item.category === currentCategory);
+
+            menuGrid.innerHTML = filtered.map(item => `
+                <div class="bg-gray-900 rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition border border-gray-800">
+                    <img src="${item.image}" alt="${item.name}" class="w-full h-48 object-cover">
+                    <div class="p-5">
+                        <span class="text-xs font-semibold text-amber-500 bg-gray-800 px-3 py-1 rounded-full">
+                            ${item.category}
+                        </span>
+                        <h3 class="text-xl font-bold mt-3 mb-2 text-white">${item.name}</h3>
+                        <p class="text-gray-400 text-sm mb-4">${item.description}</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl font-bold text-amber-500">Rp ${formatRupiah(item.price)}</span>
+                            <button onclick="addToCart(${item.id})" class="bg-amber-600 hover:bg-amber-500 text-white p-3 rounded-full transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter Category
+        function filterCategory(category) {
+            currentCategory = category;
+
+            // Update button styles
+            const buttons = document.querySelectorAll('.category-btn');
+            buttons.forEach(btn => {
+                if (btn.textContent === category) {
+                    btn.className = 'category-btn px-6 py-2 rounded-full whitespace-nowrap transition bg-amber-600 text-white';
+                } else {
+                    btn.className = 'category-btn px-6 py-2 rounded-full whitespace-nowrap transition bg-gray-800 text-gray-300 hover:bg-gray-700';
+                }
+            });
+
+            renderMenu();
+        }
+
+        // Add to Cart
+        function addToCart(itemId) {
+            const item = menuItems.find(i => i.id === itemId);
+            const existing = cart.find(i => i.id === itemId);
+
+            if (existing) {
+                existing.quantity++;
+            } else {
+                cart.push({ ...item, quantity: 1 });
+            }
+
+            updateCart();
+        }
+
+        // Update Quantity
+        function updateQuantity(itemId, change) {
+            const item = cart.find(i => i.id === itemId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    removeFromCart(itemId);
+                } else {
+                    updateCart();
+                }
+            }
+        }
+
+        // Remove from Cart
+        function removeFromCart(itemId) {
+            cart = cart.filter(i => i.id !== itemId);
+            updateCart();
+        }
+
+        // Update Cart Display
+        function updateCart() {
+            const cartItems = document.getElementById('cartItems');
+            const cartFooter = document.getElementById('cartFooter');
+            const cartBadge = document.getElementById('cartBadge');
+            const totalPrice = document.getElementById('totalPrice');
+
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            // Update badge
+            if (totalItems > 0) {
+                cartBadge.textContent = totalItems;
+                cartBadge.classList.remove('hide');
+            } else {
+                cartBadge.classList.add('hide');
+            }
+
+            // Update cart items
+            if (cart.length === 0) {
+                cartItems.innerHTML = `
+                    <div class="text-center text-gray-500 mt-20">
+                        <svg class="w-16 h-16 mx-auto mb-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                        <p>Keranjang kosong</p>
+                    </div>
+                `;
+                cartFooter.classList.add('hide');
+            } else {
+                cartItems.innerHTML = `
+                    <div class="space-y-4">
+                        ${cart.map(item => `
+                            <div class="bg-gray-800 rounded-xl p-4 border border-gray-700">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h3 class="font-bold text-white">${item.name}</h3>
+                                    <button onclick="removeFromCart(${item.id})" class="text-red-500 hover:text-red-400">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3 bg-gray-900 rounded-lg px-2 py-1">
+                                        <button onclick="updateQuantity(${item.id}, -1)" class="text-amber-500 hover:bg-gray-800 p-1 rounded">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                                            </svg>
+                                        </button>
+                                        <span class="font-bold w-8 text-center text-white">${item.quantity}</span>
+                                        <button onclick="updateQuantity(${item.id}, 1)" class="text-amber-500 hover:bg-gray-800 p-1 rounded">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <span class="font-bold text-amber-500">Rp ${formatRupiah(item.price * item.quantity)}</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                cartFooter.classList.remove('hide');
+                totalPrice.textContent = `Rp ${formatRupiah(total)}`;
+            }
+        }
+
+        // Toggle Cart
+        function toggleCart() {
+            const cartSidebar = document.getElementById('cartSidebar');
+            cartSidebar.classList.toggle('hide');
+        }
+
+        // Send to WhatsApp
+        function sendToWhatsApp() {
+            const customerName = document.getElementById('customerName').value;
+            const tableNumber = document.getElementById('tableNumber').value;
+
+            if (!customerName || cart.length === 0) {
+                alert('Mohon isi nama dan pilih menu!');
+                return;
+            }
+
+            let message = '*PESANAN BARU*\n\n';
+            message += `Nama: ${customerName}\n`;
+            if (tableNumber) message += `Meja: ${tableNumber}\n`;
+            message += '\n*Detail Pesanan:*\n';
+
+            cart.forEach(item => {
+                message += `• ${item.name} x${item.quantity} - Rp ${formatRupiah(item.price * item.quantity)}\n`;
+            });
+
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            message += `\n*Total: Rp ${formatRupiah(total)}*`;
+
+            // GANTI dengan nomor WhatsApp grup cafe Anda
+            // Format: 62xxxxxxxxxxx (tanpa +, tanpa -, tanpa spasi)
+            const waNumber = '081361679756';
+            const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
+
+            window.open(waLink, '_blank');
+        }
+
+        // Initialize
+        renderMenu();
+    </script>
+</body>
+
+</html>
